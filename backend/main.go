@@ -76,6 +76,9 @@ func listAccounts(c *gin.Context) {
 	userID := parseUint(c.Param("userId"))
 	var accounts []BankAccount
 	db.Where("user_id = ?", userID).Find(&accounts)
+	if accounts == nil {
+		accounts = []BankAccount{}
+	}
 	c.JSON(http.StatusOK, accounts)
 }
 
@@ -120,6 +123,9 @@ func listTransactions(c *gin.Context) {
 	userID := parseUint(c.Param("userId"))
 	var txs []Transaction
 	db.Where("user_id = ?", userID).Find(&txs)
+	if txs == nil {
+		txs = []Transaction{}
+	}
 	c.JSON(http.StatusOK, txs)
 }
 
