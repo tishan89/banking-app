@@ -23,6 +23,15 @@ export interface Transaction {
   currency: string;
 }
 
+export interface TransactionInput {
+  from_account_id: number;
+  account_no: string;
+  bank_name: string;
+  amount: number;
+  currency: string;
+  user_id: number;
+}
+
 const defaultUserId = 1;
 
 export const getAccounts = async () => {
@@ -40,7 +49,7 @@ export const getTransactions = async (accountId?: number) => {
   return res.data;
 };
 
-export const createTransaction = async (payload: Partial<Transaction>) => {
+export const createTransaction = async (payload: TransactionInput) => {
   const res = await api.post<Transaction>(`/users/${defaultUserId}/transactions`, payload);
   return res.data;
 };
