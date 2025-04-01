@@ -1,0 +1,46 @@
+// src/api/index.ts
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: 'https://08bd1175-7029-4caf-a11b-10d047fed4f7-dev.e1-us-east-azure.choreoapis.dev/banking-app-sandbox/backend/v1.0',
+});
+
+export interface BankAccount {
+  id: number;
+  user_id: number;
+  owner: string;
+  account_no: string;
+  bank_name: string;
+  balance: number;
+}
+
+export interface Transaction {
+  id: number;
+  user_id: number;
+  from_account_id: number;
+  to_account_id: number;
+  amount: number;
+  currency: string;
+}
+
+const defaultUserId = 1;
+
+export const getAccounts = async () => {
+  const res = await api.get<BankAccount[]>(`/users/${defaultUserId}/accounts`);
+  return res.data;
+};
+
+export const getTransactions = async (accountId?: number) => {
+  const res = await api.get<Transaction[]>(`/users/${defaultUserId}/transactions`);
+  if (accountId) {
+    return res.data.filter(
+      (tx) => tx.from_account_id === accountId || tx.to_account_id === accountId,
+    );
+  }
+  return res.data;
+};
+
+export const createTransaction = async (payload: Partial<Transaction>) => {
+  const res = await api.post<Transaction>(`/users/${defaultUserId}/transactions`, payload);
+  return res.data;
+};

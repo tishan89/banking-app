@@ -73,7 +73,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Transaction'
+              $ref: '#/components/schemas/TransactionInput'
       responses:
         '201':
           description: Transaction successful
@@ -132,3 +132,19 @@ components:
           format: float
         currency:
           type: string
+    TransactionInput:
+      type: object
+      properties:
+        from_account_id:
+          type: integer
+        account_no:
+          type: string
+        bank_name:
+          type: string
+        amount:
+          type: number
+          format: float
+        currency:
+          type: string
+        user_id:
+          type: integer
