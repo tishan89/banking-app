@@ -96,32 +96,71 @@ func deleteAccount(c *gin.Context) {
 
 func makeTransaction(c *gin.Context) {
 	userID := parseUint(c.Param("userId"))
-	var tx Transaction
-	if err := c.ShouldBindJSON(&tx); err != nil {
+
+	type TransactionInput struct {
+		FromAccountID uint    `json:"from_account_id"`
+		AccountNo     string  `json:"account_no"`
+		BankName      string  `json:"bank_name"`
+		Amount        float64 `json:"amount"`
+		Currency      string  `json:"currency"`
+		UserID        uint    `json:"user_id"`
+	}
+
+	var input TransactionInput
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if tx.Currency != "USD" {
+	if input.Currency != "USD" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Only USD is supported"})
 		return
 	}
-	tx.UserID = userID
-	var from, to BankAccount
-	db.First(&from, "id = ? AND user_id = ?", tx.FromAccountID, userID)
-	db.First(&to, tx.ToAccountID) // to account can belong to another user
-	if from.Balance < tx.Amount {
+
+	var from BankAccount
+	if err := db.First(&from, "id = ? AND user_id = ?", input.FromAccountID, userID).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Sender account not found or not owned by user"})
+		return
+	}
+
+	var to BankAccount
+	if err := db.First(&to, "account_no = ? AND bank_name = ?", input.AccountNo, input.BankName).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Recipient account not found"})
+		return
+	}
+
+	if from.Balance < input.Amount {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Insufficient funds"})
 		return
 	}
-	db.Transaction(func(txn *gorm.DB) error {
-		from.Balance -= tx.Amount
-		to.Balance += tx.Amount
-		txn.Save(&from)
-		txn.Save(&to)
-		txn.Create(&tx)
-		return nil
+
+	var txResult Transaction
+	err := db.Transaction(func(tx *gorm.DB) error {
+		from.Balance -= input.Amount
+		to.Balance += input.Amount
+
+		if err := tx.Save(&from).Error; err != nil {
+			return err
+		}
+		if err := tx.Save(&to).Error; err != nil {
+			return err
+		}
+
+		txResult = Transaction{
+			UserID:        userID,
+			FromAccountID: from.ID,
+			ToAccountID:   to.ID,
+			Amount:        input.Amount,
+			Currency:      input.Currency,
+		}
+		return tx.Create(&txResult).Error
 	})
-	c.JSON(http.StatusCreated, tx)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Transaction failed"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, txResult)
 }
 
 func listTransactions(c *gin.Context) {
