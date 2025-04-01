@@ -1,7 +1,6 @@
-// src/pages/Accounts.tsx
 import { useEffect, useState } from 'react';
 import { getAccounts, getTransactions, createTransaction, BankAccount, Transaction } from '../api';
-import { Card, CardContent, Collapse, List, ListItem, ListItemText, MenuItem, Select, FormControl, InputLabel, Grid, Typography, Container, TextField, Button, Stack } from '@mui/material';
+import { Card, CardContent, Collapse, List, ListItem, ListItemText, MenuItem, Select, FormControl, InputLabel, Box, Typography, Container, TextField, Button, Stack } from '@mui/material';
 
 export const Accounts = () => {
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
@@ -61,9 +60,9 @@ export const Accounts = () => {
           <MenuItem value={'desc'}>Balance: High → Low</MenuItem>
         </Select>
       </FormControl>
-      <Grid container spacing={2} padding={2}>
+      <Box display="flex" flexWrap="wrap" gap={2} p={2}>
         {sortedAccounts.map((account) => (
-          <Grid item xs={12} sm={6} md={4} key={account.id}>
+          <Box key={account.id} flex={1} minWidth={300}>
             <Card onClick={() => setSelectedAccountId(account.id)}>
               <CardContent>
                 <Typography variant="h6">{account.bank_name}</Typography>
@@ -106,9 +105,9 @@ export const Accounts = () => {
                 <Button variant="contained" onClick={handleTransfer}>Transfer</Button>
               </Stack>
             </Collapse>
-          </Grid>
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </Container>
   );
 };

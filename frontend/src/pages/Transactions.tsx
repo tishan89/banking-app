@@ -1,4 +1,3 @@
-// src/pages/Transactions.tsx
 import { useEffect, useState } from 'react';
 import { getTransactions, Transaction } from '../api';
 import { List, ListItem, ListItemText, Container } from '@mui/material';

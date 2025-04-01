@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://08bd1175-7029-4caf-a11b-10d047fed4f7-dev.e1-us-east-azure.choreoapis.dev/banking-app-sandbox/backend/v1.0',
+  baseURL: 'http://localhost:8080',
 });
 
 export interface BankAccount {
