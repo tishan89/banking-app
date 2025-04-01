@@ -36,6 +36,11 @@ func initDB() {
 	user := os.Getenv("MYSQL_USER")
 	password := os.Getenv("MYSQL_PWD")
 	dbName := os.Getenv("MYSQL_DB")
+
+	if host == "" || user == "" || password == "" || dbName == "" {
+		log.Fatal("One or more required MySQL environment variables are not set")
+	}
+
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=skip-verify", user, password, host, dbName)
 
 	var err error
