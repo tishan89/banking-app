@@ -1,22 +1,21 @@
 // src/App.tsx
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Button } from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Accounts } from './pages/Accounts';
 import { Transactions } from './pages/Transactions';
+import NavBar from './components/NavBar';
+import { Box } from '@mui/material';
+
 
 function App() {
   return (
     <Router>
-      <AppBar position="static">
-        <Toolbar>
-          <Button color="inherit" component={Link} to="/">Accounts</Button>
-          <Button color="inherit" component={Link} to="/transactions">Transactions</Button>
-        </Toolbar>
-      </AppBar>
-      <Routes>
-        <Route path="/" element={<Accounts />} />
-        <Route path="/transactions" element={<Transactions />} />
-      </Routes>
+      <Box sx={{ display: 'flex', paddingTop: 8, flexDirection: 'column', width:'100vw', height: '100vh' }}>
+        <NavBar />
+        <Routes>  
+          <Route path="/" element={<Accounts />} />
+          <Route path="/transactions" element={<Transactions />} />
+        </Routes>
+      </Box>
     </Router>
   );
 }
