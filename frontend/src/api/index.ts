@@ -1,7 +1,7 @@
 // src/api/index.ts
 import axios from 'axios';
 
-let baseURL = 'http://localhost:8080';
+let baseURL = 'https://08bd1175-7029-4caf-a11b-10d047fed4f7-dev.e1-us-east-azure.choreoapis.dev/banking-app-sandbox/backend/v1.0';
 
 if (typeof window !== 'undefined' && window.location.origin.includes('http')) {
   const globalConfig = (window as any).configs;
