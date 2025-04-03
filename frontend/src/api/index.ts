@@ -4,6 +4,7 @@ import axios from 'axios';
 let baseURL = 'https://08bd1175-7029-4caf-a11b-10d047fed4f7-dev.e1-us-east-azure.choreoapis.dev/banking-app-sandbox/backend/v1.0';
 
 if (typeof window !== 'undefined' && window.location.origin.includes('http')) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const globalConfig = (window as any).configs;
   if (globalConfig?.baseURL) {
     baseURL = globalConfig.baseURL;
@@ -48,6 +49,10 @@ export const getAccounts = async () => {
   return res.data;
 };
 
+export const createAccount = async (payload: BankAccount) => {
+  const res = await api.post<BankAccount>(`/users/${defaultUserId}/accounts`, payload);
+  return res.data;
+}
 export const getTransactions = async (accountId?: number) => {
   const res = await api.get<Transaction[]>(`/users/${defaultUserId}/transactions`);
   if (accountId) {
