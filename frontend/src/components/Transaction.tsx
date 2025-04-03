@@ -128,6 +128,7 @@ export default function TransactionView(props: TransactionProps) {
                 )}
                 {tabIndex === 1 && (
                     <Box p={2}>
+
                         {isLoading ? <CommonLoaders /> : <>
                             {transactions.length > 0 ? (
                                 <Stack spacing={1}>
