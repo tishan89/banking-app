@@ -132,7 +132,7 @@ export default function TransactionView(props: TransactionProps) {
                                             Amount: {transaction.amount} {transaction.currency}
                                         </Typography>
                                         <Typography variant="body2">
-                                            Date: {new Date().toLocaleString()}
+                                            Date: {new Date(transaction.created_at).toLocaleString()}
                                         </Typography>
                                     </Box>
                                 ))}

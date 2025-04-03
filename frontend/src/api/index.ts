@@ -31,6 +31,7 @@ export interface Transaction {
   to_account_id: number;
   amount: number;
   currency: string;
+  created_at: string;
 }
 
 export interface TransactionInput {

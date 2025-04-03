@@ -52,6 +52,7 @@ export const Transactions = () => {
             <TableCell>To Account</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Currency</TableCell>
+            <TableCell>Time</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,6 +62,7 @@ export const Transactions = () => {
               <TableCell>{tx.to_account_id}</TableCell>
               <TableCell>${tx.amount.toFixed(2)}</TableCell>
               <TableCell>{tx.currency}</TableCell>
+              <TableCell>{new Date(tx.created_at).toLocaleString()}</TableCell>
             </TableRow>
           ))}
         </TableBody>
