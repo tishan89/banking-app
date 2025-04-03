@@ -9,6 +9,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"time"
 )
 
 type BankAccount struct {
@@ -21,12 +22,13 @@ type BankAccount struct {
 }
 
 type Transaction struct {
-	ID            uint    `gorm:"primaryKey" json:"id"`
-	UserID        uint    `json:"user_id"`
-	FromAccountID uint    `json:"from_account_id"`
-	ToAccountID   uint    `json:"to_account_id"`
-	Amount        float64 `json:"amount"`
-	Currency      string  `json:"currency"`
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	UserID        uint      `json:"user_id"`
+	FromAccountID uint      `json:"from_account_id"`
+	ToAccountID   uint      `json:"to_account_id"`
+	Amount        float64   `json:"amount"`
+	Currency      string    `json:"currency"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 var db *gorm.DB
@@ -72,7 +74,6 @@ func createAccount(c *gin.Context) {
 		return
 	}
 	acc.UserID = parseUint(userID)
-	// Use math/rand/v2 for Go 1.24+
 	acc.Balance = float64(rand.Intn(4001) + 1000)
 	db.Create(&acc)
 	c.JSON(http.StatusCreated, acc)
