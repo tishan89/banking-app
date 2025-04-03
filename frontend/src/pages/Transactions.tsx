@@ -13,8 +13,7 @@ export const Transactions = () => {
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
 
   const sortedTxs = useMemo(() => 
-    txs
-      .filter(tx => JSON.stringify(tx).toLowerCase().includes(searchValue.toLowerCase()))
+    txs?.filter(tx => JSON.stringify(tx).toLowerCase().includes(searchValue.toLowerCase()))
       .sort((a, b) => (sort === 'asc' ? a.amount - b.amount : b.amount - a.amount)),
     [txs, searchValue, sort]
   );

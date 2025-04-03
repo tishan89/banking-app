@@ -1,5 +1,4 @@
 import { Alert } from '@mui/material'
-import React from 'react'
 import { WarningSharp } from '@mui/icons-material';
 
 export default function NoData(props: { message?: string }) {

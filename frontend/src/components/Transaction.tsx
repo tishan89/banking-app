@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import  { useCallback, useEffect } from 'react'
 import { BankAccount, createTransaction, getTransactions, Transaction } from '../api'
 import { Box, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
 import { Stack, Button } from '@mui/material'
@@ -69,7 +69,7 @@ export default function TransactionView(props: TransactionProps) {
                 </IconButton>
             </Typography>
             <Box>
-                <Tabs value={tabIndex} onChange={(e, newValue) => setTabIndex(newValue)}>
+                <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)}>
                     <Tab label="New Transaction" />
                     <Tab label="History" />
                 </Tabs>
