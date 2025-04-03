@@ -55,7 +55,8 @@ function App() {
         <NavBar user={user as IUser} />
         <Routes>
           {user && (
-            <> <Route path="/" element={<Accounts />} />
+            <>
+              <Route path="/" element={<Accounts />} />
               <Route path="/transactions" element={<Transactions />} />
             </>
           )}

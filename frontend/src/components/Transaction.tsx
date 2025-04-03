@@ -1,18 +1,22 @@
-import  { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { BankAccount, createTransaction, getTransactions, Transaction } from '../api'
 import { Box, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
 import { Stack, Button } from '@mui/material'
 import { useState } from 'react'
 import NoData from './NoData'
 import { Close, MonetizationOn } from '@mui/icons-material'
+import { getAccountMap } from '../utils/accounts'
+import CommonLoaders from './CommonLoaders'
 
 interface TransactionProps {
     from: BankAccount | null;
     onClose: () => void
+    accounts: BankAccount[]
 }
 
 export default function TransactionView(props: TransactionProps) {
-    const { from, onClose } = props
+    const { from, accounts, onClose } = props
+    const acountMap = useMemo(() => getAccountMap(accounts), [accounts])
     const [transferForm, setTransferForm] = useState({
         to_account_no: '',
         to_bank: '',
@@ -20,15 +24,18 @@ export default function TransactionView(props: TransactionProps) {
     })
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [tabIndex, setTabIndex] = useState(0)
+    const [isLoading, setIsLoading] = useState(true)
 
     const fetchTransactions = useCallback(async () => {
         if (!from) return
         const data = await getTransactions(from.id);
         setTransactions(data)
+        setIsLoading(false)
     }, [from])
 
     useEffect(() => {
         if (tabIndex === 1) {
+            setIsLoading(true)
             fetchTransactions();
         }
     }, [fetchTransactions, from, tabIndex])
@@ -121,25 +128,31 @@ export default function TransactionView(props: TransactionProps) {
                 )}
                 {tabIndex === 1 && (
                     <Box p={2}>
-                        {transactions.length > 0 ? (
-                            <Stack spacing={1}>
-                                {transactions.map((transaction, index) => (
-                                    <Box key={index} p={1} border={1} borderRadius={1}>
-                                        <Typography variant="body2">
-                                            {transaction.from_account_id} to {transaction.to_account_id}
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            Amount: {transaction.amount} {transaction.currency}
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            Date: {new Date().toLocaleString()}
-                                        </Typography>
-                                    </Box>
-                                ))}
-                            </Stack>
-                        ) : (
-                           <NoData message="No transactions found." />
-                        )}
+                        {isLoading ? <CommonLoaders /> : <>
+                            {transactions.length > 0 ? (
+                                <Stack spacing={1}>
+                                    {transactions.map((transaction, index) => (
+                                        <Box key={index} p={1} border={1} borderRadius={1}>
+                                            <Typography variant="body2">
+                                                From: {acountMap.get(transaction.from_account_id)?.account_no} ({acountMap.get(transaction.from_account_id)?.bank_name}) | {acountMap.get(transaction.from_account_id)?.owner}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                To: {acountMap.get(transaction.to_account_id)?.account_no} ({acountMap.get(transaction.to_account_id)?.bank_name}) | {acountMap.get(transaction.to_account_id)?.owner}
+                                            </Typography>
+
+                                            <Typography variant="body2">
+                                                Amount: {transaction.amount} {transaction.currency}
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                Date: {new Date(transaction.created_at).toLocaleString()}
+                                            </Typography>
+                                        </Box>
+                                    ))}
+                                </Stack>
+                            ) : (
+                                <NoData message="No transactions found." />
+                            )}
+                        </>}
                     </Box>
                 )}
             </Box>

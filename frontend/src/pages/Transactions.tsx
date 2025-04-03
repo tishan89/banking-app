@@ -1,18 +1,41 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getTransactions, Transaction } from '../api';
+import { BankAccount, getAccounts, getTransactions, Transaction } from '../api';
 import { Table, TableHead, TableBody, TableRow, TableCell, Box, Divider } from '@mui/material';
 import { TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { getAccountMap } from '../utils/accounts';
+import CommonLoaders from '../components/CommonLoaders';
 
 export const Transactions = () => {
   const [txs, setTxs] = useState<Transaction[]>([]);
 
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
+  const acountMap = useMemo(() => getAccountMap(accounts), [accounts])
+  const [isLoading, setIsLoading] = useState(true);
+  
   useEffect(() => {
-    getTransactions().then(setTxs).catch(console.error);
+    getAccounts().then(setAccounts).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      setIsLoading(true);
+      try {
+        const transactions = await getTransactions();
+        setTxs(transactions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
   const [searchValue, setSearchValue] = useState('');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
 
-  const sortedTxs = useMemo(() => 
+  const sortedTxs = useMemo(() =>
     txs?.filter(tx => JSON.stringify(tx).toLowerCase().includes(searchValue.toLowerCase()))
       .sort((a, b) => (sort === 'asc' ? a.amount - b.amount : b.amount - a.amount)),
     [txs, searchValue, sort]
@@ -45,6 +68,7 @@ export const Transactions = () => {
         </FormControl>
       </Box>
       <Divider />
+      {isLoading && (<CommonLoaders />)}
       <Table>
         <TableHead>
           <TableRow>
@@ -52,15 +76,18 @@ export const Transactions = () => {
             <TableCell>To Account</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Currency</TableCell>
+            <TableCell>Time</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
           {sortedTxs.map(tx => (
             <TableRow key={tx.id}>
-              <TableCell>{tx.from_account_id}</TableCell>
-              <TableCell>{tx.to_account_id}</TableCell>
+              <TableCell>{acountMap.get(tx.from_account_id)?.account_no} ({tx.from_account_id})</TableCell>
+              <TableCell>{acountMap.get(tx.to_account_id)?.account_no} ({tx.to_account_id})</TableCell>
               <TableCell>${tx.amount.toFixed(2)}</TableCell>
               <TableCell>{tx.currency}</TableCell>
+              <TableCell>{new Date(tx.created_at).toLocaleString()}</TableCell>
             </TableRow>
           ))}
         </TableBody>

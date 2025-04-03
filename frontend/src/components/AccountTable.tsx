@@ -15,6 +15,7 @@ return (
         <Table>
             <TableHead>
                 <TableRow>
+                    <TableCell>Id</TableCell>
                     <TableCell>Owner</TableCell>
                     <TableCell>Account No</TableCell>
                     <TableCell>Bank</TableCell>
@@ -41,6 +42,7 @@ return (
                             }
                         }}
                     >
+                        <TableCell>{account.id}</TableCell>
                         <TableCell>{account.owner}</TableCell>
                         <TableCell>{account.account_no}</TableCell>
                         <TableCell>{account.bank_name}</TableCell>
