@@ -1,48 +1,49 @@
-import { AppBar, Box, Button, Divider, Drawer, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography } from '@mui/material'
-import { useState } from 'react';
-import { useLocation, useMatch, useNavigate } from 'react-router-dom'
+import { MonetizationOn } from '@mui/icons-material';
+import { AppBar, Avatar, Box, Button, Toolbar, Typography } from '@mui/material'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { IconButton, Menu, MenuItem } from '@mui/material';
+import React, { useState } from 'react';
+import User, { IUser } from './User';
+import { deepOrange } from '@mui/material/colors';
+import { getSessionHint } from '../utils/cookie';
 
 const navItems = [
     { name: 'Accounts', path: '/' },
     { name: 'Transactions', path: '/transactions' },
 ];
-const drawerWidth = 240;
-export default function NavBar() {
-    const [mobileOpen, setMobileOpen] = useState(false);
+
+interface NavBarProps {
+    user: IUser | null
+}
+export default function NavBar(props: NavBarProps) {
+    const { user } = props
     const navigate = useNavigate();
-    const handleDrawerToggle = () => {
-        setMobileOpen((prevState) => !prevState);
+    // Match the current route
+    const location = useLocation();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
     };
 
-    // Match the current route
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
-    const matchHome = useMatch('');
-    const location = useLocation();
-    const container = window !== undefined ? () => window.document.body : undefined;
+    const handleLogout = () => {
+        setAnchorEl(null);
+        // Add logout logic here
+        window.location.href = '/auth/logout?session_hint=' + getSessionHint();
+    };
 
-
-    const drawer = (
-        <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ my: 2 }}>
-                MUI
-            </Typography>
-            <Divider />
-            <List>
-                {navItems.map((item) => (
-                    <ListItem key={item.name} disablePadding>
-                        <ListItemButton sx={{ textAlign: 'center', opacity: matchHome?.pathname === item.path ? 1 : 0.5 }} onClick={() => navigate(item.path)}>
-                            <ListItemText primary={item.name} />
-                        </ListItemButton>
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
-    );
 
     return (
         <AppBar position="fixed" >
             <AppBar component="nav">
                 <Toolbar>
+                    <MonetizationOn />
+                    &nbsp;
                     <Typography
                         variant="h6"
                         component="div"
@@ -51,31 +52,36 @@ export default function NavBar() {
                         Demo Bank
                     </Typography>
                     <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                        {navItems.map((item) => (
-                            <Button key={item.name} sx={{ color: '#fff', opacity: location?.pathname === item.path ? 1 : 0.5  }} onClick={() => navigate(item.path)}>
+                        {user && navItems.map((item) => (
+                            <Button key={item.name} sx={{ color: '#fff', opacity: location?.pathname === item.path ? 1 : 0.5 }} onClick={() => navigate(item.path)}>
                                 {item.name}
                             </Button>
                         ))}
                     </Box>
+                    {user &&
+                        <>
+                            <IconButton
+                                size="medium"
+                                onClick={handleMenuOpen}
+                            >
+                                <Avatar sx={{ bgcolor: deepOrange[500] }}>{`${user.first_name[0]}${user.last_name[0]}`}</Avatar>
+                            </IconButton>
+
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleMenuClose}
+                            >
+                                <MenuItem>
+                                    <User user={user} />
+                                </MenuItem>
+                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                            </Menu>
+                        </>
+                        }
                 </Toolbar>
             </AppBar>
-            <nav>
-                <Drawer
-                    container={container}
-                    variant="temporary"
-                    open={mobileOpen}
-                    onClose={handleDrawerToggle}
-                    ModalProps={{
-                        keepMounted: true, // Better open performance on mobile.
-                    }}
-                    sx={{
-                        display: { xs: 'block', sm: 'none' },
-                        '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-                    }}
-                >
-                    {drawer}
-                </Drawer>
-            </nav>
+
         </AppBar>
     )
 }

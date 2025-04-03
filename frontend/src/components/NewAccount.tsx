@@ -32,7 +32,6 @@ export default function NewAccount() {
     };
 
     const handleSubmit = () => {
-        console.log('Bank Account Created:', formData);
         createAccount(formData)
         setOpen(false);
     };

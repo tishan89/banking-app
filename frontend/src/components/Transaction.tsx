@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect } from 'react'
+import  { useCallback, useEffect } from 'react'
 import { BankAccount, createTransaction, getTransactions, Transaction } from '../api'
 import { Box, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
 import { Stack, Button } from '@mui/material'
 import { useState } from 'react'
 import NoData from './NoData'
-import { Close } from '@mui/icons-material'
+import { Close, MonetizationOn } from '@mui/icons-material'
 
 interface TransactionProps {
     from: BankAccount | null;
@@ -54,6 +54,7 @@ export default function TransactionView(props: TransactionProps) {
         }
     };
 
+    const isNotCompleted = transferForm.to_account_no === '' || transferForm.to_bank === '' || transferForm.amount === ''
     return (
         <Box sx={{ width: 400 }} gap={1} p={2} display="flex" flexDirection="column">
             <Typography variant="h6" gutterBottom>
@@ -68,7 +69,7 @@ export default function TransactionView(props: TransactionProps) {
                 </IconButton>
             </Typography>
             <Box>
-                <Tabs value={tabIndex} onChange={(e, newValue) => setTabIndex(newValue)}>
+                <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)}>
                     <Tab label="New Transaction" />
                     <Tab label="History" />
                 </Tabs>
@@ -113,7 +114,7 @@ export default function TransactionView(props: TransactionProps) {
                                     onChange={(e) => setTransferForm({ ...transferForm, amount: e.target.value })}
                                     size="small"
                                 />
-                                <Button variant="contained" onClick={handleTransfer}>Transfer</Button>
+                                <Button variant="contained" disabled={isNotCompleted} startIcon={<MonetizationOn />} onClick={handleTransfer}>Transfer</Button>
                             </Stack>
                         )}
                     </Box>

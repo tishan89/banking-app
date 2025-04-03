@@ -48,7 +48,6 @@ export const Accounts = () => {
               <MenuItem value={'asc'}>Balance: Low → High</MenuItem>
               <MenuItem value={'desc'}>Balance: High → Low</MenuItem>
             </Select>
-            
           </FormControl>
           <NewAccount />
         </Box>

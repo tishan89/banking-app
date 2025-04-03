@@ -6,21 +6,47 @@ import { createTheme, ThemeProvider } from '@mui/material'
 
 const theme = createTheme({
   palette: {
-    // primary: {
-    //   main: '#2196F3', // Blue color
-    // },
-    // secondary: {
-    //   main: '#03A9F4', // Light blue
-    // },
-    // background: {
-    //   default: '#E3F2FD', // Light blueish background
-    //   paper: '#eee', // Slightly darker blue for paper
-    // },
-    // text: {
-    //   primary: '#0D47A1', // Dark blue for contrast
-    //   secondary: '#1976D2', // Medium blue for secondary text
-    // },
+    primary: {
+      main: '#335',
+    },
+    secondary: {
+      main: '#555',
+    },
+    background: {
+      default: '#fff',
+      paper: '#fff',
+    },
   },
+  shape: {
+    borderRadius: 4, // Makes components flat by removing border radius
+  },
+  shadows: [
+    "none",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)",
+    "0px 1px 2px rgba(0, 0, 0, 0.1)"
+], // Adds a light shadow to all shadow levels
 });
 
 createRoot(document.getElementById('root')!).render(
