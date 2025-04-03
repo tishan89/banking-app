@@ -132,6 +132,9 @@ components:
           format: float
         currency:
           type: string
+        created_at:
+          type: string
+          format: date-time
     TransactionInput:
       type: object
       properties:
