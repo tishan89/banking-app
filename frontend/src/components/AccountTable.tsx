@@ -1,6 +1,6 @@
 import React from 'react'
 import { BankAccount } from '../api'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box } from '@mui/material';
 
 interface AccountTableProps {
     accounts: BankAccount[],
@@ -11,7 +11,7 @@ interface AccountTableProps {
 export const AccountTable: React.FC<AccountTableProps> = (props) => {
     const {accounts} = props
 return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Box}>
         <Table>
             <TableHead>
                 <TableRow>
@@ -29,6 +29,16 @@ return (
                         style={{
                             cursor: 'pointer',
                             backgroundColor: props.selectedAccountId === account.id ? '#f0f8ff' : 'transparent',
+                        }}
+                        onMouseEnter={(e) => {
+                            if (props.selectedAccountId !== account.id) {
+                                (e.currentTarget as HTMLElement).style.backgroundColor = '#f5f5f5';
+                            }
+                        }}
+                        onMouseLeave={(e) => {
+                            if (props.selectedAccountId !== account.id) {
+                                (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                            }
                         }}
                     >
                         <TableCell>{account.owner}</TableCell>
