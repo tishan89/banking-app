@@ -4,16 +4,30 @@ import { Collapse, MenuItem, Select, FormControl, InputLabel, Box, TextField, Di
 import { AccountTable } from '../components/AccountTable';
 import TransactionView from '../components/Transaction';
 import NewAccount from '../components/NewAccount';
+import CommonLoaders from '../components/CommonLoaders';
 
 export const Accounts = () => {
-  const [accounts, setAccounts] = useState<BankAccount[]>([]);
-  const [selectedAccount, setSelectedAccount] = useState<BankAccount | null>(null);
+
   const [searchValue, setSearchValue] = useState('');
   const [sort, setSort] = useState<'asc' | 'desc'>('asc');
-
+  const [selectedAccount, setSelectedAccount] = useState<BankAccount | null>(null);
+  const [accounts, setAccounts] = useState<BankAccount[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getAccounts().then(setAccounts).catch(console.error);
+    const fetchAccounts = async () => {
+      setIsLoading(true);
+      try {
+        const accounts = await getAccounts();
+        setAccounts(accounts);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAccounts();
   }, []);
 
   const sortedAccounts = useMemo(() => {
@@ -52,11 +66,12 @@ export const Accounts = () => {
           <NewAccount />
         </Box>
         <Divider />
+        {isLoading && (<CommonLoaders />)}
         <AccountTable accounts={sortedAccounts} onSelect={(account) => setSelectedAccount(account)} selectedAccountId={selectedAccount?.id ?? null} />
       </Box>
       {selectedAccount && <Divider orientation='vertical' /> }
       <Collapse in={!!selectedAccount} orientation='horizontal' unmountOnExit>
-          <TransactionView from={selectedAccount} onClose = {()=>setSelectedAccount(null)}  />
+          <TransactionView from={selectedAccount} accounts={accounts} onClose = {()=>setSelectedAccount(null)}  />
       </Collapse>
     </Box>
   );
