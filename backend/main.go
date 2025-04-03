@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
+	"math/rand"
+	"net/http"
+	"os"
 )
 
 type BankAccount struct {
@@ -72,7 +72,8 @@ func createAccount(c *gin.Context) {
 		return
 	}
 	acc.UserID = parseUint(userID)
-	acc.Balance = 0
+	// Use math/rand/v2 for Go 1.24+
+	acc.Balance = float64(rand.Intn(4001) + 1000)
 	db.Create(&acc)
 	c.JSON(http.StatusCreated, acc)
 }
