@@ -71,15 +71,6 @@ export default function NewAccount() {
                         value={formData.bank_name}
                         onChange={handleChange}
                     />
-                    <TextField
-                        margin="dense"
-                        label="Balance"
-                        name="balance"
-                        fullWidth
-                        size='small'
-                        value={formData.balance}
-                        onChange={handleChange}
-                    />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpen(false)} size="small" variant='outlined' color="secondary">
