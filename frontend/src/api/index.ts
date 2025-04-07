@@ -6,8 +6,8 @@ let baseURL = 'https://08bd1175-7029-4caf-a11b-10d047fed4f7-dev.e1-us-east-azure
 if (typeof window !== 'undefined' && window.location.origin.includes('http')) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const globalConfig = (window as any).configs;
-  if (globalConfig?.baseURL) {
-    baseURL = globalConfig.baseURL;
+  if (globalConfig?.apiUrl) {
+    baseURL = globalConfig.apiUrl;
   }
 }
 
