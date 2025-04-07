@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BankAccount, getAccounts, getTransactions, Transaction } from '../api';
-import { Table, TableHead, TableBody, TableRow, TableCell, Box, Divider } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, Box, Divider, InputAdornment } from '@mui/material';
 import { TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { getAccountMap } from '../utils/accounts';
 import CommonLoaders from '../components/CommonLoaders';
+import { Search } from '@mui/icons-material';
+import NoData from '../components/NoData';
 
 export const Transactions = () => {
   const [txs, setTxs] = useState<Transaction[]>([]);
@@ -11,7 +13,7 @@ export const Transactions = () => {
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const acountMap = useMemo(() => getAccountMap(accounts), [accounts])
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     getAccounts().then(setAccounts).catch(console.error);
   }, []);
@@ -48,10 +50,19 @@ export const Transactions = () => {
           id="search"
           value={searchValue}
           size="small"
-          label="Search"
+          placeholder="Search"
           onChange={(e) => setSearchValue(e.target.value)}
           variant="outlined"
           sx={{ width: 300 }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Search />
+                </InputAdornment>
+              ),
+            },
+          }}
         />
         <FormControl size="small" variant="outlined">
           <InputLabel id="sort-label">Sort</InputLabel>
@@ -67,31 +78,38 @@ export const Transactions = () => {
           </Select>
         </FormControl>
       </Box>
-      <Divider />
-      {isLoading && (<CommonLoaders />)}
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>From Account</TableCell>
-            <TableCell>To Account</TableCell>
-            <TableCell>Amount</TableCell>
-            <TableCell>Currency</TableCell>
-            <TableCell>Time</TableCell>
-          </TableRow>
-        </TableHead>
-
-        <TableBody>
-          {sortedTxs.map(tx => (
-            <TableRow key={tx.id}>
-              <TableCell>{acountMap.get(tx.from_account_id)?.account_no} ({tx.from_account_id})</TableCell>
-              <TableCell>{acountMap.get(tx.to_account_id)?.account_no} ({tx.to_account_id})</TableCell>
-              <TableCell>${tx.amount.toFixed(2)}</TableCell>
-              <TableCell>{tx.currency}</TableCell>
-              <TableCell>{new Date(tx.created_at).toLocaleString()}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Box>
+        <Divider />
+        {isLoading ? (<CommonLoaders />) : (
+          <Table size='small'>
+            <TableHead>
+              <TableRow style={{ backgroundColor: "#eee" }}>
+                <TableCell align='center'>ID</TableCell>
+                <TableCell align='right'>From Account</TableCell>
+                <TableCell align='right'>To Account</TableCell>
+                <TableCell align='right'>Amount</TableCell>
+                <TableCell align='center'>Currency</TableCell>
+                <TableCell>Date/Time</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {sortedTxs.map(tx => (
+                <TableRow key={tx.id}>
+                  <TableCell align='center'>{tx.id}</TableCell>
+                  <TableCell align='right'>{acountMap.get(tx.from_account_id)?.account_no} ({tx.from_account_id})</TableCell>
+                  <TableCell align='right'>{acountMap.get(tx.to_account_id)?.account_no} ({tx.to_account_id})</TableCell>
+                  <TableCell align='right'>{tx.amount.toFixed(2)}</TableCell>
+                  <TableCell align='center'>{tx.currency}</TableCell>
+                  <TableCell>{new Date(tx.created_at).toLocaleString()}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+        {sortedTxs.length === 0 && !isLoading && (
+          <NoData message='No Transactions Found' />
+        )}
+      </Box>
     </Box>
   );
 };

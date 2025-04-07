@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { BankAccount, createTransaction, getTransactions, Transaction } from '../api'
-import { Box, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { Alert, AlertTitle, Box, Divider, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
 import { Stack, Button } from '@mui/material'
 import { useState } from 'react'
 import NoData from './NoData'
-import { Close, MonetizationOn } from '@mui/icons-material'
+import { Check, Close, History, MonetizationOn, NewLabel } from '@mui/icons-material'
 import { getAccountMap } from '../utils/accounts'
 import CommonLoaders from './CommonLoaders'
 
@@ -41,11 +41,13 @@ export default function TransactionView(props: TransactionProps) {
     }, [fetchTransactions, from, tabIndex])
 
 
+    const [isLoadingTransfer, setIsLoadingTransfer] = useState(false)
     const handleTransfer = async () => {
         if (!from || transferForm.to_account_no === '' || transferForm.to_bank === '' || transferForm.amount === '') {
             return
         }
         try {
+            setIsLoadingTransfer(true)
             await createTransaction({
                 from_account_id: from.id,
                 account_no: transferForm.to_account_no,
@@ -59,13 +61,14 @@ export default function TransactionView(props: TransactionProps) {
         } catch (e) {
             console.error('Transaction failed', e);
         }
+        setIsLoadingTransfer(false)
     };
 
-    const isNotCompleted = transferForm.to_account_no === '' || transferForm.to_bank === '' || transferForm.amount === ''
+    const isNotCompleted = isLoadingTransfer || transferForm.to_account_no === '' || transferForm.to_bank === '' || transferForm.amount === ''
     return (
         <Box sx={{ width: 400 }} gap={1} p={2} display="flex" flexDirection="column">
             <Typography variant="h6" gutterBottom>
-                Transfer
+                Account Transactions
                 <IconButton
                     onClick={onClose}
                     sx={{ float: 'right' }}
@@ -75,10 +78,10 @@ export default function TransactionView(props: TransactionProps) {
                     <Close />
                 </IconButton>
             </Typography>
-            <Box>
-                <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)}>
-                    <Tab label="New Transaction" />
-                    <Tab label="History" />
+            <Box display="flex" flexDirection="column" gap={1}>
+                <Tabs sx={{height:50}} value={tabIndex}  onChange={(_, newValue) => setTabIndex(newValue)}>
+                    <Tab label="New Transaction"   icon={<NewLabel />} iconPosition='start' />
+                    <Tab label="History" icon={<History />} iconPosition='start'/>
                 </Tabs>
                 {tabIndex === 0 && (
                     <Box p={2}>
@@ -103,7 +106,7 @@ export default function TransactionView(props: TransactionProps) {
                                     disabled
                                 />
                                 <TextField
-                                    label="Recipient Account #"
+                                    label="Recipient Account No"
                                     value={transferForm.to_account_no}
                                     onChange={(e) => setTransferForm({ ...transferForm, to_account_no: e.target.value })}
                                     size="small"
@@ -133,21 +136,20 @@ export default function TransactionView(props: TransactionProps) {
                             {transactions.length > 0 ? (
                                 <Stack spacing={1}>
                                     {transactions.map((transaction, index) => (
-                                        <Box key={index} p={1} border={1} borderRadius={1}>
-                                            <Typography variant="body2">
-                                                From: {acountMap.get(transaction.from_account_id)?.account_no} ({acountMap.get(transaction.from_account_id)?.bank_name}) | {acountMap.get(transaction.from_account_id)?.owner}
-                                            </Typography>
-                                            <Typography variant="body2">
-                                                To: {acountMap.get(transaction.to_account_id)?.account_no} ({acountMap.get(transaction.to_account_id)?.bank_name}) | {acountMap.get(transaction.to_account_id)?.owner}
-                                            </Typography>
+                                        <Alert severity={from?.id !== transaction.from_account_id ? "success" :"info"} icon={<Check />} key={index}>
+                                            <AlertTitle>
+                                                {from?.id === transaction.from_account_id ? "Transferred:" : "Received:"}
+                                                &nbsp;
+                                                {transaction.amount.toFixed(2)} {transaction.currency}
+                                            </AlertTitle>
 
-                                            <Typography variant="body2">
-                                                Amount: {transaction.amount} {transaction.currency}
+                                            <Divider sx={{width:'100%',mb:0.5}}/>
+                                            <Typography variant="body2" fontSize={12} color="text.secondary">
+                                                {from?.id === transaction.from_account_id ? <> To: {acountMap.get(transaction.to_account_id)?.account_no}</> : <>From: {acountMap.get(transaction.from_account_id)?.account_no ?? 'N/A'} </>}
+                                                &nbsp;<br />
+                                                Date/Time: {new Date(transaction.created_at).toLocaleString()}
                                             </Typography>
-                                            <Typography variant="body2">
-                                                Date: {new Date(transaction.created_at).toLocaleString()}
-                                            </Typography>
-                                        </Box>
+                                        </Alert>
                                     ))}
                                 </Stack>
                             ) : (

@@ -51,7 +51,8 @@ function App() {
 
   return (
     <Router>
-      <Box sx={{ display: 'flex', paddingTop: 8, background: theme.palette.background.default, flexDirection: 'column', width: '100vw', height: '100vh' }}>
+
+      <Box sx={{ display: 'flex', background: theme.palette.background.default, flexDirection: 'column', width: '100vw', height: '100vh' }}>
         <NavBar user={user as IUser} />
         <Routes>
           {user && (
@@ -63,9 +64,13 @@ function App() {
           <Route path="/error" element={<Error type='auth' />} />
           <Route path="*" element={<Error type='404' />} />
         </Routes>
+        <Box component="footer" sx={{ mt: 'auto', py: 1, textAlign: 'center', background: theme.palette.background.paper, borderTop: `1px solid #eee` }}> 
+          <Typography variant="body2" color="textSecondary">
+            © {new Date().getFullYear()} Banking App. All rights reserved.
+          </Typography>
+        </Box>
       </Box>
     </Router>
   );
 }
-
 export default App;

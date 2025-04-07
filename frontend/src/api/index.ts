@@ -54,6 +54,12 @@ export const createAccount = async (payload: BankAccount) => {
   const res = await api.post<BankAccount>(`/users/${defaultUserId}/accounts`, payload);
   return res.data;
 }
+
+export const deleteAccount = async (id: number) => {
+  const res = await api.delete<BankAccount>(`/users/${defaultUserId}/accounts/${id}`);
+  return res.data;
+}
+
 export const getTransactions = async (accountId?: number) => {
   const res = await api.get<Transaction[]>(`/users/${defaultUserId}/transactions`);
   if (accountId) {
