@@ -22,7 +22,7 @@ interface userProps {
 }
 
 export default function User(props?: userProps) {
-    const { email, first_name, last_name, username, groups } = props?.user ?? mockUser
+    const { email, first_name, last_name, username } = props?.user ?? mockUser
     return (
         <Box display="flex" borderRadius={1} gap={1} flexDirection="column" alignItems="flex-start" justifyContent="center" p={2}>
             <Box display="flex" alignItems="center" gap={1} justifyContent="center" mb={1}>
@@ -39,11 +39,6 @@ export default function User(props?: userProps) {
             <Divider sx={{ width: '100%'}} />
             <Typography fontSize={14} color="text.secondary">
                 Email: {email}<br/>
-                Groups: {groups?.map((group, index) => (
-                    <span key={index}>
-                        {group}{index < groups.length - 1 ? ', ' : ''}
-                    </span>
-                ))}
             </Typography>
         </Box>
     )
