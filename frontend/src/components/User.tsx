@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Divider, Typography } from "@mui/material";
+import { deepOrange } from "@mui/material/colors";
 
 export interface IUser {
     email: string,
@@ -21,17 +22,28 @@ interface userProps {
 }
 
 export default function User(props?: userProps) {
-    const { email, first_name, last_name, username } = props?.user ?? mockUser
+    const { email, first_name, last_name, username, groups } = props?.user ?? mockUser
     return (
-        <Box display="flex" borderRadius={1} flexDirection="column" alignItems="center" justifyContent="center" p={2} bgcolor="#f5f5f5">
-            <Typography variant="h6" component="div" gutterBottom>
-                {first_name} {last_name}
-            </Typography>
-            <Typography >
-                Username: {username}
-            </Typography>
-            <Typography >
-                Email: {email}
+        <Box display="flex" borderRadius={1} gap={1} flexDirection="column" alignItems="flex-start" justifyContent="center" p={2}>
+            <Box display="flex" alignItems="center" gap={1} justifyContent="center" mb={1}>
+                <Avatar sx={{ bgcolor: deepOrange[500] }}>{`${first_name[0]}${last_name[0]}`}</Avatar>
+                <Box display="flex" flexDirection="column" alignItems="flex-start">
+                    <Typography variant="h6" paddingBottom={-3} noWrap>
+                        {first_name} {last_name}
+                        <Typography component="span" fontFamily="serif" fontSize={14} color="text.secondary">
+                            &nbsp;({username})
+                        </Typography>
+                    </Typography>
+                </Box>
+            </Box>
+            <Divider sx={{ width: '100%'}} />
+            <Typography fontSize={14} color="text.secondary">
+                Email: {email}<br/>
+                Groups: {groups?.map((group, index) => (
+                    <span key={index}>
+                        {group}{index < groups.length - 1 ? ', ' : ''}
+                    </span>
+                ))}
             </Typography>
         </Box>
     )

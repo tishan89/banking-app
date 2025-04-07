@@ -1,4 +1,4 @@
-import { MonetizationOn } from '@mui/icons-material';
+import { Logout, MonetizationOn } from '@mui/icons-material';
 import { AppBar, Avatar, Box, Button, Toolbar, Typography } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconButton, Menu, MenuItem } from '@mui/material';
@@ -72,13 +72,11 @@ export default function NavBar(props: NavBarProps) {
                                 open={open}
                                 onClose={handleMenuClose}
                             >
-                                <MenuItem>
-                                    <User user={user} />
-                                </MenuItem>
-                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                <User user={user} />
+                                <MenuItem onClick={handleLogout}> <Logout /> &nbsp; Logout</MenuItem>
                             </Menu>
                         </>
-                        }
+                    }
                 </Toolbar>
             </AppBar>
 

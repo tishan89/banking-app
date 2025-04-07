@@ -5,6 +5,7 @@ import { AccountTable } from '../components/AccountTable';
 import TransactionView from '../components/Transaction';
 import NewAccount from '../components/NewAccount';
 import CommonLoaders from '../components/CommonLoaders';
+import NoData from '../components/NoData';
 
 export const Accounts = () => {
 
@@ -14,21 +15,22 @@ export const Accounts = () => {
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchAccounts = async () => {
-      setIsLoading(true);
-      try {
-        const accounts = await getAccounts();
-        setAccounts(accounts);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchAccounts = async () => {
+    setIsLoading(true);
+    try {
+      const accounts = await getAccounts();
+      setAccounts(accounts);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAccounts();
   }, []);
+
 
   const sortedAccounts = useMemo(() => {
     return [...accounts]
@@ -63,15 +65,21 @@ export const Accounts = () => {
               <MenuItem value={'desc'}>Balance: High → Low</MenuItem>
             </Select>
           </FormControl>
-          <NewAccount />
+          <NewAccount fetchAccounts={fetchAccounts} />
         </Box>
-        <Divider />
-        {isLoading && (<CommonLoaders />)}
-        <AccountTable accounts={sortedAccounts} onSelect={(account) => setSelectedAccount(account)} selectedAccountId={selectedAccount?.id ?? null} />
+        <Box display="flex" flexGrow={1} flexDirection="column" overflow="hidden">
+          <Divider />
+          {isLoading ?
+            (<CommonLoaders />) :
+            (<AccountTable accounts={sortedAccounts} onSelect={(account) => setSelectedAccount(account)} selectedAccountId={selectedAccount?.id ?? null} />)}
+          {sortedAccounts.length === 0 && !isLoading && (
+            <NoData message='No Accounts Found' />
+          )}
+        </Box>
       </Box>
-      {selectedAccount && <Divider orientation='vertical' /> }
+      {selectedAccount && <Divider orientation='vertical' />}
       <Collapse in={!!selectedAccount} orientation='horizontal' unmountOnExit>
-          <TransactionView from={selectedAccount} accounts={accounts} onClose = {()=>setSelectedAccount(null)}  />
+        <TransactionView from={selectedAccount} accounts={accounts} onClose={() => setSelectedAccount(null)} />
       </Collapse>
     </Box>
   );

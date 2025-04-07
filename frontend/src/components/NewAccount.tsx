@@ -12,8 +12,9 @@ import { Add } from '@mui/icons-material';
 
 
 
-export default function NewAccount() {
+export default function NewAccount(props: { fetchAccounts:  () => void }) {
     const [open, setOpen] = useState(false);
+    const { fetchAccounts } = props;
     const [formData, setFormData] = useState<BankAccount>({
         user_id: 0,
         owner: '',
@@ -32,7 +33,7 @@ export default function NewAccount() {
     };
 
     const handleSubmit = () => {
-        createAccount(formData)
+        createAccount(formData).finally(fetchAccounts)
         setOpen(false);
     };
 

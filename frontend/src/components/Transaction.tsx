@@ -23,7 +23,7 @@ export default function TransactionView(props: TransactionProps) {
         amount: ''
     })
     const [transactions, setTransactions] = useState<Transaction[]>([])
-    const [tabIndex, setTabIndex] = useState(0)
+    const [tabIndex, setTabIndex] = useState(1)
     const [isLoading, setIsLoading] = useState(true)
 
     const fetchTransactions = useCallback(async () => {
