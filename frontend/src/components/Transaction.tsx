@@ -29,7 +29,7 @@ export default function TransactionView(props: TransactionProps) {
     const fetchTransactions = useCallback(async () => {
         if (!from) return
         const data = await getTransactions(from.id);
-        setTransactions(data)
+        setTransactions(data.reverse());
         setIsLoading(false)
     }, [from])
 
