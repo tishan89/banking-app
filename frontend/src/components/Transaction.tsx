@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { BankAccount, createTransaction, getTransactions, Transaction } from '../api'
-import { Alert, AlertTitle, Box, Divider, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
+import { Alert, AlertTitle, Autocomplete, Box, CircularProgress, Divider, IconButton, Tab, Tabs, TextField, Typography } from '@mui/material'
 import { Stack, Button } from '@mui/material'
 import { useState } from 'react'
 import NoData from './NoData'
@@ -58,6 +58,7 @@ export default function TransactionView(props: TransactionProps) {
             });
             fetchTransactions();
             setTransferForm({ to_account_no: '', to_bank: '', amount: '' });
+            setTabIndex(1);
         } catch (e) {
             console.error('Transaction failed', e);
         }
@@ -79,9 +80,9 @@ export default function TransactionView(props: TransactionProps) {
                 </IconButton>
             </Typography>
             <Box display="flex" flexDirection="column" gap={1}>
-                <Tabs sx={{height:50}} value={tabIndex}  onChange={(_, newValue) => setTabIndex(newValue)}>
-                    <Tab label="New Transaction"   icon={<NewLabel />} iconPosition='start' />
-                    <Tab label="History" icon={<History />} iconPosition='start'/>
+                <Tabs sx={{ height: 50 }} value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)}>
+                    <Tab label="New Transaction" icon={<NewLabel />} iconPosition='start' />
+                    <Tab label="History" icon={<History />} iconPosition='start' />
                 </Tabs>
                 {tabIndex === 0 && (
                     <Box p={2}>
@@ -105,14 +106,26 @@ export default function TransactionView(props: TransactionProps) {
                                     size="small"
                                     disabled
                                 />
-                                <TextField
-                                    label="Recipient Account No"
-                                    value={transferForm.to_account_no}
-                                    onChange={(e) => setTransferForm({ ...transferForm, to_account_no: e.target.value })}
+                                <Autocomplete
+                                    options={accounts.filter((account) => account.id !== from.id)}
+                                    getOptionLabel={(option) => `${option.account_no} (${option.bank_name})`}
+                                    renderInput={(params) => <TextField {...params} label="Recipient Account" size="small" />}
+                                    onChange={(_, value) => {
+                                        if (value) {
+                                            setTransferForm({
+                                                ...transferForm,
+                                                to_account_no: value.account_no,
+                                                to_bank: value.bank_name
+                                            })
+                                        }
+                                    }}
+                                    value={accounts.find((account) => account.account_no === transferForm.to_account_no) ?? null}
+                                    isOptionEqualToValue={(option, value) => option.account_no === value.account_no}
                                     size="small"
                                 />
                                 <TextField
                                     label="Recipient Bank"
+                                    disabled
                                     value={transferForm.to_bank}
                                     onChange={(e) => setTransferForm({ ...transferForm, to_bank: e.target.value })}
                                     size="small"
@@ -124,7 +137,7 @@ export default function TransactionView(props: TransactionProps) {
                                     onChange={(e) => setTransferForm({ ...transferForm, amount: e.target.value })}
                                     size="small"
                                 />
-                                <Button variant="contained" disabled={isNotCompleted} startIcon={<MonetizationOn />} onClick={handleTransfer}>Transfer</Button>
+                                <Button variant="contained" disabled={isNotCompleted} startIcon={isLoadingTransfer ? <CircularProgress size={15} /> :<MonetizationOn />} onClick={handleTransfer}>Transfer</Button>
                             </Stack>
                         )}
                     </Box>
@@ -136,14 +149,14 @@ export default function TransactionView(props: TransactionProps) {
                             {transactions.length > 0 ? (
                                 <Stack spacing={1}>
                                     {transactions.map((transaction, index) => (
-                                        <Alert severity={from?.id !== transaction.from_account_id ? "success" :"info"} icon={<Check />} key={index}>
+                                        <Alert severity={from?.id !== transaction.from_account_id ? "success" : "info"} icon={<Check />} key={index}>
                                             <AlertTitle>
                                                 {from?.id === transaction.from_account_id ? "Transferred:" : "Received:"}
                                                 &nbsp;
                                                 {transaction.amount.toFixed(2)} {transaction.currency}
                                             </AlertTitle>
 
-                                            <Divider sx={{width:'100%',mb:0.5}}/>
+                                            <Divider sx={{ width: '100%', mb: 0.5 }} />
                                             <Typography variant="body2" fontSize={12} color="text.secondary">
                                                 {from?.id === transaction.from_account_id ? <> To: {acountMap.get(transaction.to_account_id)?.account_no}</> : <>From: {acountMap.get(transaction.from_account_id)?.account_no ?? 'N/A'} </>}
                                                 &nbsp;<br />
