@@ -24,3 +24,9 @@ endpoints:
     # This is only applicable to REST or WS endpoint types.
     # The path should be relative to the docker context.
     schemaFilePath: openapi.yaml
+dependencies:
+  connectionReferences:
+  - name: banking-db-411-test
+    resourceRef: database:mysql-bank-demo/bank-app-dev-test1
+
+    
