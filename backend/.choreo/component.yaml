@@ -26,7 +26,8 @@ endpoints:
     schemaFilePath: openapi.yaml
 dependencies:
   connectionReferences:
-  - name: banking-db-411-test
-    resourceRef: database:mysql-bank-demo/bank-app-dev-test1
+    - name: banking db connection
+      resourceRef: database:mysql-bank-demo/bank-app-dev
+  
 
     
