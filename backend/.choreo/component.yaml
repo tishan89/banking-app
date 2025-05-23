@@ -26,7 +26,7 @@ endpoints:
     schemaFilePath: openapi.yaml
 dependencies:
     connectionReferences:
-    - name: banking-app-db-con
+    - name: banking-db-connection
       resourceRef: database:banking-data/bankingapp
     
 
