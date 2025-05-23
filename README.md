@@ -1,9 +1,25 @@
 # Banking App
 
-This Repo contains the source code of the banking app. banking app has two components, frontend and backend namely. Frontend depends on the backend while backend depends on a DB
+A sample banking application built with:
 
-## Frontend
-Frontend is implemented in ReactJS as a single page application. Frontend webapp will use backend service as the BFF
+- Choreo-managed authentication  
+- Node.js backend (Backend for Frontend pattern)  
+- React.js single-page frontend  
+- MySQL database  
+- Deployed on [WSO2 Choreo](https://wso2.com/choreo/)
 
-## Backend
-Backend is implemented in go. It offers a REST API for the frontend to consume. As the datastore backend component will use a mysql DB
+## Architecture
+
+[ React SPA ]  [ Node.js Backend (BFF) ]  [ MySQL DB ]  [ Choreo Authentication ]
+
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js > 21  
+- MySQL > 7  
+- npm  
+- Choreo account  
+
+
