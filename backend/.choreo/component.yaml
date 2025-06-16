@@ -26,7 +26,7 @@ endpoints:
     schemaFilePath: openapi.yaml
 dependencies:
     connectionReferences:
-    - name: CHOREO BANKING DB CONNECTION
+    - name: BANKING DB CONNECTION
       resourceRef: database:banking/banking
     
 
